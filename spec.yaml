@@ -1,0 +1,104 @@
+# https://www.scylladb.com/wp-content/uploads/scylla-opensource-4.png
+
+version: '3.9'
+
+x-omnistrate-service-plan:
+  name: 'ScyllaDB Dedicated'
+  tenancyType: 'OMNISTRATE_DEDICATED_TENANCY'
+  deployment:
+    hostedDeployment:
+      AwsAccountId: '<ACCOUNT ID>'
+      AwsBootstrapRoleAccountArn: 'arn:aws:iam::<ACCOUNT ID>:role/omnistrate-bootstrap-role'
+
+x-omnistrate-integrations:
+ - omnistrateLogging
+ - omnistrateMetrics
+
+services:
+  scylla-node:
+    image: scylladb/scylla:6.1.5
+    privileged: true
+    x-omnistrate-api-params:
+      - key: instanceStorageIOPS
+        description: Instance Storage IOPS; Applicable to AWS only
+        name: Instance Storage IOPS
+        type: Float64
+        modifiable: true
+        required: false
+        export: true
+        defaultValue: "3000"
+      - key: instanceStorageThroughput
+        description: Instance Storage Throughput (in MB /s); Applicable to AWS only
+        name: Instance Storage Throughput
+        type: Float64
+        modifiable: true
+        required: false
+        export: true
+        defaultValue: "125"
+      - key: instanceStorageSizeGi
+        description: Instance Storage Size (in GiB)
+        name: Instance Storage Size
+        type: Float64
+        modifiable: true
+        required: false
+        export: true
+        defaultValue: "30"
+      - key: instanceType
+        description: Instance Type
+        name: Instance Type
+        type: String
+        modifiable: true
+        required: false
+        export: true
+        defaultValue: "t3.xlarge"
+      - key: username
+        description: Superuser username
+        name: Superuser Username
+        type: String
+        modifiable: false
+        required: true
+        export: true
+      - key: saltedPassword
+        description: Superuser salted password as processed by mkpassword or similar
+        name: Superuser Salted Password
+        type: Password
+        modifiable: false
+        required: true
+        export: true
+    x-omnistrate-compute:
+      replicaCount: 3
+      instanceTypes:
+        - cloudProvider: aws
+          apiParam: instanceType
+        - cloudProvider: gcp
+          apiParam: instanceType
+    x-omnistrate-capabilities:
+      enableMultiZone: true
+      backupConfiguration:
+        backupRetentionInDays: 30
+        backupPeriodInHours: 24
+    volumes:
+      - ./scylla-node-conf:/etc/scylla
+      - ./scylla-server.conf:/etc/supervisord.conf.d/scylla-server.conf
+      - source: ./data
+        target: /var/lib/scylla
+        type: bind
+        x-omnistrate-storage:
+          aws:
+            instanceStorageType: AWS::EBS_GP3
+            instanceStorageSizeGiAPIParam: instanceStorageSizeGi
+            instanceStorageIOPSAPIParam: instanceStorageIOPS
+            instanceStorageThroughputAPIParam: instanceStorageThroughput
+          gcp:
+            instanceStorageType: GCP::PD_BALANCED
+            instanceStorageSizeGiAPIParam: instanceStorageSizeGi
+    x-omnistrate-actionhooks:
+      # image with netcat
+      - image: alpine:3.21.3
+        scope: NODE
+        type: HEALTH_CHECK
+        commandTemplate: |
+          nc -z -v -w 5 {{ $sys.compute.node.name }} 9042
+          nc -z -v -w 5 {{ $sys.compute.node.name }} 10000
+    ports:
+      - "9042:9042"  # CQL
