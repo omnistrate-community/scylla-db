@@ -4,15 +4,10 @@ listen_address: 127.0.0.1
 broadcast_address: {{ $sys.compute.node.name }}
 rpc_address: 127.0.0.1
 broadcast_rpc_address: {{ $sys.network.node.externalEndpoint }}
-seed_provider:
-  - class_name: org.apache.cassandra.locator.SimpleSeedProvider
-    parameters:
-      - seeds: "{{ $sys.compute.nodes[*].name }}"
 endpoint_snitch: GossipingPropertyFileSnitch
 api_address: 0.0.0.0
 # alternator_port: 8000
 # alternator_address: {{ $sys.network.node.externalEndpoint }}
-developer_mode: false
 
 # TLS settings
 client_encryption_options:
@@ -21,10 +16,10 @@ client_encryption_options:
     certificate: /etc/tls/tls.crt
     keyfile: /etc/tls/tls.key
 
-server_encryption_options:
-    internode_encryption: all
-    certificate: /etc/tls/tls.crt
-    keyfile: /etc/tls/tls.key
+# server_encryption_options:
+#     internode_encryption: all
+#     certificate: /etc/tls/tls.crt
+#     keyfile: /etc/tls/tls.key
 
 # Authentication and Authorization
 authenticator: PasswordAuthenticator

@@ -1,0 +1,6 @@
+disks:
+  - mountpoint: /var/lib/scylla
+    read_iops: {{ $var.instanceStorageIOPS }}
+    read_bandwidth: 4194304000
+    write_iops: {{ $var.instanceStorageIOPS }}
+    write_bandwidth: 4194304000
