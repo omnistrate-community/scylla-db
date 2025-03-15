@@ -6,7 +6,7 @@ rpc_address: 127.0.0.1
 broadcast_rpc_address: {{ $sys.network.node.externalEndpoint }}
 endpoint_snitch: GossipingPropertyFileSnitch
 api_address: 0.0.0.0
-commitlog_directory: /var/lib/scylla/commitlog
+commitlog_directory: /cache/commitlog
 # alternator_port: 8000
 # alternator_address: {{ $sys.network.node.externalEndpoint }}
 

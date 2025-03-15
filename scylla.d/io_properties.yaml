@@ -1,6 +1,6 @@
 disks:
   - mountpoint: /var/lib/scylla
-    read_iops: {{ $var.instanceStorageIOPS }}
-    read_bandwidth: 4194304000
-    write_iops: {{ $var.instanceStorageIOPS }}
-    write_bandwidth: 4194304000
+    read_iops: 3000
+    read_bandwidth: 402653184 # 0.256 MiB/s * 3000 * 1024 * 1024 / 2 = 384MiB - https://docs.aws.amazon.com/ebs/latest/userguide/provisioned-iops.html
+    write_iops: 3000
+    write_bandwidth: 402653184 # 0.256 MiB/s * 3000 * 1024 * 1024 / 2 = 384MiB - https://docs.aws.amazon.com/ebs/latest/userguide/provisioned-iops.html
