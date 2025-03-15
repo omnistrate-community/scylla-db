@@ -35,7 +35,11 @@ services:
         modifiable: true
         required: false
         export: true
-        defaultValue: "i3.large"
+        defaultValue: "is4gen.large"
+        options:
+        - is4gen.large
+        - i3.large
+        - r7gd.large
       - key: username
         description: Superuser username
         name: Superuser Username
