@@ -17,7 +17,7 @@ x-omnistrate-integrations:
 services:
   scylla-node:
     image: scylladb/scylla:6.1.5
-    command: --seeds "{{ $sys.compute.nodes[*].name }}" --overprovisioned 0 --experimental 0 --developer-mode 0 --io-setup 0 --smp "{{ $sys.compute.node.cores }}" --reserve-memory "256M" --io-properties-file /etc/scylla.d/io_properties.yaml
+    command: --seeds "{{ $sys.compute.nodes[*].name }}" --overprovisioned 0 --experimental 0 --developer-mode 0 --io-setup 0 --smp "{{ $sys.compute.node.cores }}" --reserve-memory "1536M" --io-properties-file /etc/scylla.d/io_properties.yaml
     privileged: true
     x-omnistrate-api-params:
       - key: instanceStorageSizeGi
