@@ -7,8 +7,8 @@ x-omnistrate-service-plan:
   tenancyType: 'OMNISTRATE_DEDICATED_TENANCY'
   deployment:
     hostedDeployment:
-      AwsAccountId: '750055729623'
-      AwsBootstrapRoleAccountArn: 'arn:aws:iam::750055729623:role/omnistrate-bootstrap-role'
+      AwsAccountId: '<>'
+      AwsBootstrapRoleAccountArn: 'arn:aws:iam::<>:role/omnistrate-bootstrap-role'
 
 x-omnistrate-integrations:
  - omnistrateLogging
@@ -36,6 +36,14 @@ services:
         required: false
         export: true
         defaultValue: "m7g.xlarge"
+      - key: instanceStorageIOPS
+        description: Instance Storage IOPS
+        name: Instance Storage IOPS
+        type: Float64
+        modifiable: true
+        required: false
+        export: true
+        defaultValue: "16000"
       - key: username
         description: Superuser username
         name: Superuser Username
@@ -73,7 +81,7 @@ services:
           aws:
             instanceStorageType: AWS::EBS_IO2
             instanceStorageSizeGiAPIParam: instanceStorageSizeGi
-            instanceStorageIOPS: 3000
+            instanceStorageIOPSAPIParam: instanceStorageIOPS
           gcp:
             instanceStorageType: GCP::PD_BALANCED
             instanceStorageSizeGiAPIParam: instanceStorageSizeGi
@@ -83,6 +91,8 @@ services:
         scope: NODE
         type: HEALTH_CHECK
         commandTemplate: |
+          set -ex
+
           nc -z -v -w 5 {{ $sys.compute.node.name }} 9042
           nc -z -v -w 5 {{ $sys.compute.node.name }} 10000
       - image: busybox:1.37
